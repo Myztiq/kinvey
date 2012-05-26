@@ -9,16 +9,6 @@ var express = require('express')
 
 // Configuration
 app.configure(function(){
-  function processObjForNums(obj){
-    for(var key in obj) {
-      if(typeof obj[key] == "object") {
-        obj[key] = processObjForNums(obj[key]);
-      }else if(/^\d+$/.test(obj[key])) {
-        obj[key] = parseInt(obj[key],10);
-      }
-    }
-    return obj;
-  }
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
