@@ -1,0 +1,56 @@
+!!! 5
+html
+  head
+    script(src="/scripts/thirdParty/head.js")
+    title= typeof(title) !== 'undefined' ? title : ""
+    link(rel="stylesheet", type="text/css", href="/styles/styles.css")
+    link(href='http://fonts.googleapis.com/css?family=Open+Sans:400,700', rel='stylesheet', type='text/css')
+    block styles
+  body
+    div#loading(data-bind="fadeVisible: !loginInitialized()") Loading...
+    div(data-bind="fadeVisible: loginInitialized()", style="display: none")
+      #header(data-bind="with: loginObject")
+        div(data-bind="visible: !user()")
+          a(data-bind="click: showLogin") Login
+          | &nbsp;&nbsp;
+          a(data-bind="click: showRegister") Register
+        div(data-bind="visible: user()")
+          span(data-bind="text: user() ? 'Not '+ user().get('fullName') + '? ' : ''")
+          a(data-bind="click: logout") Logout
+      .wrapper
+        div(data-bind="with: loginObject")
+          form(data-bind="slideVisible: loginVisible, submit: login")
+            label
+              span Username
+              input(data-bind="value: username")
+            br
+            label
+              span Password
+              input(data-bind="value: password", type="password")
+            br
+            button Login
+          form(data-bind="slideVisible: registerVisible, submit: register")
+            label
+              span Username
+              input(data-bind="value: username")
+            br
+            label
+              span Password
+              input(data-bind="value: password", type="password")
+            br
+            label
+              span Full Name
+              input(data-bind="value: fullName")
+            br
+            button Register
+        block content
+    script
+      head.js({'jquery':'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'}, {'cookie':'/scripts/thirdParty/jquery-cookie.js'});
+      head.js({'knockout':'/scripts/thirdParty/knockout.js'},{'koBindings':'/scripts/thirdParty/knockoutCustomBindings.js'});
+      head.js({'moment':'/scripts/thirdParty/moment.js'});
+      head.js({'kinvey':'/scripts/thirdParty/kinvey-js-0.9.1.min.js'});
+      head.ready(function(){
+        head.js('/scripts/login.js');
+      });
+
+    block scripts

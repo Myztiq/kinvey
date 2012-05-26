@@ -1,0 +1,84 @@
+@import "/styles/elements";
+
+@black: rgb(2,3,4);
+@red: rgb(84,31,20);
+@brown: rgb(147,129,114);
+@gold: rgb(204,158,97);
+@grey: rgb(98,98,102);
+@pageWidth:800px;
+body{
+  font-family: 'Open Sans', sans-serif;
+  padding: 0px;
+  margin: 0px;
+  .diagonalBackground(@brown,-45deg, 3%, 90px);
+  color: @black;
+  a{
+    color: @black;
+    border-bottom: 1px dotted @black;
+    cursor: pointer;
+    &:hover{
+      color: lighten(@black, 20%);
+      border-bottom: 1px dotted lighten(@black, 20%);
+    }
+  }
+  form label span{
+    min-width: 80px;
+    display: inline-block;
+    text-align: right;
+    padding-right: 4px;
+  }
+  .wrapper{
+    width: @pageWidth;
+    margin: 10px auto 30px auto;
+    background-color: @gold;
+    .rounded(30px);
+    .drop-shadow(1px, 1px, 5px, 0.3);
+    min-height: 400px;
+    padding: 15px;
+    border: 6px solid @red;
+  }
+  #header{
+    padding-bottom: 2px;
+    width: @pageWidth;
+    margin: 5px auto;
+    height: 20px;
+    margin-top: 25px;
+    div{
+      float: right;
+      background-color: @gold;
+      border: 6px solid @red;
+      border-bottom: none;
+      .rounded(10px 10px 0px 0px);
+      padding: 5px 20px 5px 20px;
+
+    }
+  }
+  #loading{
+    width: 300px;
+    left: 50%;
+
+    position: absolute;
+    margin: 30px auto;
+    margin-left: -150px;
+    background-color: @gold;
+    .rounded(10px);
+    .drop-shadow(1px, 1px, 5px, 0.3);
+    padding: 15px;
+    border: 6px solid @red;
+
+  }
+}
+
+
+
+
+
+.diagonalBackground(@color:grey, @angle:-45deg, @change:2%, @size:10px){
+  background-color:@color;
+  background: -webkit-linear-gradient(@angle, @color 0%, @color 25%, darken(@color, @change) 25%, darken(@color, @change) 50%, @color 50%, @color 75%, darken(@color, @change) 75%, darken(@color, @change) 100%);
+  background: -o-linear-gradient(@angle, @color 0%, @color 25%, darken(@color, @change) 25%, darken(@color, @change) 50%, @color 50%, @color 75%, darken(@color, @change) 75%, darken(@color, @change) 100%);
+  background: -ms-linear-gradient(@angle, @color 0%, @color 25%, darken(@color, @change) 25%, darken(@color, @change) 50%, @color 50%, @color 75%, darken(@color, @change) 75%, darken(@color, @change) 100%);
+  background: linear-gradient(@angle, @color 0%, @color 25%, darken(@color, @change) 25%, darken(@color, @change) 50%, @color 50%, @color 75%, darken(@color, @change) 75%, darken(@color, @change) 100%);
+//background: -moz-linear-gradient(@angle, @color 0%, @color 25%, darken(@color, @change) 25%, darken(@color, @change) 50%, @color 50%, @color 75%, darken(@color, @change) 75%, darken(@color, @change) 100%);
+  background-size: @size @size;
+}

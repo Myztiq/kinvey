@@ -1,0 +1,10 @@
+{
+    "name": "Kinvey"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "2.5.x"
+    , "jade":"0.x"
+    , "less": "git://github.com/signedon/less.js.git"
+  }
+}

@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 Good Day
+  div.indexBindings
+    div(data-bind="foreach: todoList")
+      input(data-bind="value: title")
+      br
+    form(data-bind="submit: addListItem")
+      input(data-bind="value: newListItemText, valueUpdate:'afterkeydown'", placeholder="New List Item")
+      button(style="visibility: hidden")
+
+
+block scripts
+  script
+    head.ready(function(){
+      head.js('/scripts/index.js');
+    });
