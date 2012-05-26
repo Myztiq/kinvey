@@ -2,11 +2,22 @@
 
   function Index(){
     var self = this;
+    //This includes the login info on the page (required to have happen if we utilize the base layout because it depends on the loginObject)
     self.loginObject = ko.observable(loginObject());
+
+
     self.initialized = ko.booleanObservable(false);
     self.todoList = ko.observableArray([]);
     self.newListItemText = ko.observable();
     self.showCompleted = ko.booleanObservable(true);
+
+    self.loginObject().user.subscribe(function(newVal){
+      if(newVal){
+        self.setup();
+      }else{
+        self.initialized(false);
+      }
+    })
 
     //METHODS
     //METHODS
@@ -40,20 +51,27 @@
     //INITIALIZATION
     //INITIALIZATION
     //INITIALIZATION
-    self.initialized(true);
 
-    var kListCollection = new Kinvey.Collection('list-collection');
-    kListCollection.fetch({
-      success: function(list) {
-        for(var i=0;i<list.length;i++){
-          self.todoList.push(new ListItem(list[i]));
+    self.setup = function(){
+      var kListCollection = new Kinvey.Collection('list-collection');
+      kListCollection.fetch({
+        success: function(list) {
+          self.todoList([]);
+          for(var i=0;i<list.length;i++){
+            //This check should not need to be here... When I fetch from the list-collection it should only return items that I have access to read...
+            if(list[i].attr._acl.creator == self.loginObject().user().getUsername()){
+              self.todoList.push(new ListItem(list[i]));
+            }
+          }
+          self.sort();
+          self.initialized(true);
+        },
+        error: function(error) {
+          alert(error.error);
         }
-        self.sort();
-      },
-      error: function(error) {
-        alert(error.error);
-      }
-    });
+      });
+    }
+    self.setup();
 
     return this;
   }

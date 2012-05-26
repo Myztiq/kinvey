@@ -99,7 +99,7 @@ function loginObject(){
         user.logout();
       }
       self.user(false);
-
+      self.showLogin();
     }
 
 
