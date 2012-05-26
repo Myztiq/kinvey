@@ -59,7 +59,7 @@
       });
     });
 
-    self.completed = ko.observableBoolean(false);
+    self.completed = ko.booleanObservable(false);
     self.completed(kEntity.get('completed'));
     self.completed.subscribe(function(newValue){
       kEntity.set('completed',newValue);
