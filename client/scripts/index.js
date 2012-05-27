@@ -93,12 +93,14 @@
    * @param options
    */
   ko.extenders.saveOnChange = function(target, options) {
-    var saveTimer;
+    var saveTimer; //Timer to throttle the entry saving
     target.subscribe(function(newVal){
       if(newVal){
-        options.kEntity.set(options.key,newVal);
+        //Clear the timeout so we can set the save to go after another 300ms
         clearTimeout(saveTimer);
         saveTimer = setTimeout(function(){
+          //Preform the save (don't forget to update the entry)
+          options.kEntity.set(options.key,newVal);
           options.kEntity.save({
             error:function(error){
               index.addError(error.error);
