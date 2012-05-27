@@ -96,7 +96,7 @@
     var self = this;
     self.title = ko.observable(kEntity.get('title')).extend({saveOnChange:{key: 'title', kEntity: kEntity}});
     self.completed = ko.booleanObservable(kEntity.get('completed')).extend({saveOnChange:{key: 'completed', kEntity: kEntity}});
-
+    self.creator = ko.booleanObservable(kEntity.attr._acl.creator);
     //METHODS
     //METHODS
     //METHODS
