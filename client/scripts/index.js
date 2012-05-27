@@ -9,6 +9,7 @@
     self.todoList = ko.observableArray([]);
     self.newListItemText = ko.observable();
     self.showCompleted = ko.booleanObservable(true);
+    self.errors = ko.observableArray([]);
 
     self.loginObject().user.subscribe(function(newVal){
       if(newVal){
@@ -31,8 +32,9 @@
     }
 
     self.removeListItem = function(listItem){
-      self.todoList.remove(listItem);
-      listItem.remove();
+      listItem.remove(function(){
+        self.todoList.remove(listItem);
+      });
     }
 
     self.sort = function(){
@@ -42,6 +44,14 @@
         var rightKey = b[key]().toLowerCase();
         return  leftKey == rightKey ? 0 : (leftKey < rightKey ? -1 : 1);
       });
+    }
+
+    self.addError = function(message){
+      var error = new ErrorMessage(message);
+      self.errors.push(error);
+      setTimeout(function(){
+        self.errors.remove(error);
+      },1000);
     }
 
 
@@ -66,7 +76,7 @@
           self.initialized(true);
         },
         error: function(error) {
-          alert(error.error);
+          index.addError(error.error);
         }
       });
     }
@@ -84,11 +94,20 @@
     target.subscribe(function(newVal){
       if(newVal){
         options.kEntity.set(options.key,newVal)
-        options.kEntity.save();
+        options.kEntity.save({
+          error:function(error){
+            index.addError(error.error);
+          }
+        });
       }
     });
     return target;
   };
+
+  function ErrorMessage(msg){
+    var self = this;
+    self.message = ko.observable(msg);
+  }
 
 
 
@@ -102,8 +121,15 @@
     //METHODS
     //METHODS
     //METHODS
-    self.remove = function(){
-      kEntity.destroy();
+    self.remove = function(cb){
+      kEntity.destroy({
+        success:function(){
+          cb();
+        },
+        error: function(error){
+          index.addError(error.error);
+        }
+      });
     }
   }
 
@@ -117,6 +143,7 @@
     }
   });
 
+  var index = new Index();
   //The magic line that starts the entire chain rolling with knockout.
-  ko.applyBindings(new Index());
+  ko.applyBindings(index);
 })();

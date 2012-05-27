@@ -3,6 +3,9 @@ extends layout
 block content
   div(data-bind="visible: initialized()", style="display: none")
     h1 Good Day
+    div(data-bind="template: { foreach: errors }")
+      span(data-bind="text: message")
+      br
     label
       span Show Completed
       input(data-bind="checked: showCompleted",type="checkbox")
