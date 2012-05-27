@@ -85,20 +85,26 @@
     return this;
   }
 
+
+
   /**
    * Custom knockout extender to save the entire list item on change
    * @param target
    * @param options
    */
   ko.extenders.saveOnChange = function(target, options) {
+    var saveTimer;
     target.subscribe(function(newVal){
       if(newVal){
-        options.kEntity.set(options.key,newVal)
-        options.kEntity.save({
-          error:function(error){
-            index.addError(error.error);
-          }
-        });
+        options.kEntity.set(options.key,newVal);
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(function(){
+          options.kEntity.save({
+            error:function(error){
+              index.addError(error.error);
+            }
+          });
+        },300)
       }
     });
     return target;
