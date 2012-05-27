@@ -6,8 +6,6 @@ function loginObject(){
 
   return Login();
 
-
-
   function Login(){
     var self = this;
     self.loginInitialized = ko.booleanObservable(false);
@@ -71,8 +69,7 @@ function loginObject(){
      * Preform login utilizing the form variables
      */
     self.login = function(){
-      var user = new Kinvey.User();
-      user.login(self.username(), self.password(), {
+      new Kinvey.User().login(self.username(), self.password(), {
         success: function(user) {
           self.user(user);
           self.loginVisible(false);
@@ -121,8 +118,7 @@ function loginObject(){
       var userCookie = $.cookie('user');
       if(userCookie){
         userCookie = JSON.parse(userCookie);
-        var kinveyUser = new Kinvey.User();
-        kinveyUser.login(userCookie.username, userCookie.password, {
+        new Kinvey.User().login(userCookie.username, userCookie.password, {
           success: function(user) {
             self.user(user);
             self.loginInitialized(true);

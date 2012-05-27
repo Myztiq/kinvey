@@ -1,5 +1,4 @@
 (function(){
-
   function Index(){
     var self = this;
     //This includes the login info on the page (required to have happen if we utilize the base layout because it depends on the loginObject)
@@ -59,9 +58,9 @@
           self.todoList([]);
           for(var i=0;i<list.length;i++){
             //This check should not need to be here... When I fetch from the list-collection it should only return items that I have access to read...
-            if(list[i].attr._acl.creator == self.loginObject().user().getUsername()){
+            //if(list[i].attr._acl.creator == self.loginObject().user().getUsername()){
               self.todoList.push(new ListItem(list[i]));
-            }
+            //}
           }
           self.sort();
           self.initialized(true);
@@ -84,7 +83,7 @@
   ko.extenders.saveOnChange = function(target, options) {
     target.subscribe(function(newVal){
       if(newVal){
-        options.kEntity.set(options.key,newVal);
+        options.kEntity.set(options.key,newVal)
         options.kEntity.save();
       }
     });
@@ -118,5 +117,6 @@
     }
   });
 
+  //The magic line that starts the entire chain rolling with knockout.
   ko.applyBindings(new Index());
 })();
