@@ -23,7 +23,7 @@ block content
               td.price
                 div(data-bind="text: item.formattedPrice()")
               td.qty
-                input(data-bind="value: tmpQty, valueUpdate:'afterkeydown'", type="number")
+                input(data-bind="value: tmpQty, valueUpdate:'afterkeydown'", type="number", min="0", max="999")
               td
                 .button(data-bind="click: updateQty, visible: tmpQty() != qty() && tmpQty() > 0") Update
                 .button(data-bind="click: $root.removeFromCart, visible: tmpQty() <= 0") Remove
