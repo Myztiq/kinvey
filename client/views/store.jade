@@ -2,23 +2,52 @@ extends layout
 
 block content
   #store(data-bind="slideVisible: loginObject().user()")
-    div(data-bind="visible: initialized()", style="display: none")
+    div
       h1 Welcome to the store!
       div(data-bind="template: { foreach: errors }")
         span(data-bind="text: message")
         br
-      .cart
-        span You have
-        span(data-bind="text: ' '+cartItems()+' item'+ (cartItems()==1? '': 's')+ ' in your cart'")
-        span(data-bind="text: ' for a total of $'+cartPrice()")
-      .categorySelection
-        div(data-bind="foreach: storeCategories")
-          .category(data-bind="text: $data, click: $parent.selectCategory")
-      .storeItems(data-bind="foreach: storeItems")
-        .item(data-bind="slideVisible: category() == $parent.selectedCategory()")
-          .name(data-bind="text: name")
-          .addToCart(data-bind="click: $root.addToCart") Add To Cart
-          .price(data-bind="text: price")
+      .cartView(data-bind="slideVisible: showCart()")
+        .button.viewStore(data-bind="click: viewStore") View Store
+        table
+          thead
+            th Name
+            th(width="100px").price Price
+            th(width="40px").qty Qty
+            th(width="100px")
+          tbody
+            | <!-- ko foreach: cart -->
+            tr
+              td
+                div(data-bind="text: item.name()")
+              td.price
+                div(data-bind="text: item.formattedPrice()")
+              td.qty
+                input(data-bind="value: tmpQty, valueUpdate:'afterkeydown'", type="number")
+              td
+                .button(data-bind="click: updateQty, visible: tmpQty() != qty() && tmpQty() > 0") Update
+                .button(data-bind="click: $root.removeFromCart, visible: tmpQty() <= 0") Remove
+            | <!-- /ko-->
+        .subTotal
+          | Subtotal:
+          span(data-bind="text: cartPrice()")
+        .button.checkout(data-bind="click: checkout") Checkout
+        .clear
+
+      .storeView(data-bind="slideVisible: !showCart()")
+        .cart
+          span You have
+          span(data-bind="text: ' '+cartItems()+' item'+ (cartItems()==1? '': 's')+ ' in your cart'")
+          span(data-bind="text: ' for a total of '+cartPrice()")
+          .button.viewCart(data-bind="click: viewCart") View Cart
+        .categorySelection
+          div(data-bind="foreach: storeCategories")
+            .category(data-bind="text: $data, click: $parent.selectCategory")
+        .storeItems(data-bind="foreach: storeItems")
+          .item(data-bind="slideVisible: category() == $parent.selectedCategory()")
+            .name(data-bind="text: name")
+            .addToCart.button(data-bind="click: $root.addToCart") Add To Cart
+            .price(data-bind="text: formattedPrice")
 
 
 block scripts

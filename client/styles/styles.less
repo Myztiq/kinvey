@@ -70,60 +70,102 @@ body{
 }
 
 #store{
-  .categorySelection{
-    font-size: 25px;
-    .category{
-      cursor: pointer;
-      font-size: 16px;
-      padding: 10px;
-      margin: 5px;
-      .rounded(5px);
+  .cartView{
+    .checkout{
+      float: right;
+      margin-right: 110px;
+      padding: 20px;
+      margin-top: 8px;
+      border: 2px solid @red;
+    }
+    table{
+      width: 100%;
+      input{
+        width: 40px;
+      }
+      .price,.qty{
+        text-align: right;
+      }
+      .totals{
+        border-top: 3px solid @black;
+        .total{
+          font-weight: bold;
+          text-align: right;
+        }
+      }
+    }
+    .subTotal{
+      border-top: 1px dotted @brown;
+      text-align: right;
+      padding-right: 110px;
+      font-weight: bold;
       color: @black;
-      background-color: lighten(@grey, 10%);
-      display: inline-block;
-      &:hover{
-        color: @gold;
-        background-color: @grey;
+      span{
+        padding-left: 5px;
+        color: @red;
       }
     }
   }
-  .storeItems{
-    padding-top: 15px;
-    .item{
-      border-bottom: 1px dotted transparent;
-      &:hover{
-        background-color: lighten(@gold, 3%);
-        border-bottom: 1px dotted @grey;
-      }
-
-      .name{
-        display: inline-block;
-      }
-      .price{
-        float: right;
-        text-align: right;
-        padding-right: 10px;
-        display: inline-block;
-
-      }
-      .addToCart{
-        float: right;
-        display: inline-block;
+  .storeView{
+    .categorySelection{
+      font-size: 25px;
+      .category{
+        cursor: pointer;
+        font-size: 16px;
+        padding: 10px;
+        margin: 5px;
+        .rounded(5px);
+        color: @black;
         background-color: lighten(@grey, 10%);
         display: inline-block;
-        cursor: pointer;
-        color: @black;
-        padding: 0px 5px;
-        .rounded(5px);
         &:hover{
           color: @gold;
           background-color: @grey;
         }
       }
     }
+    .storeItems{
+      padding-top: 15px;
+      .item{
+        border-bottom: 1px dotted transparent;
+        &:hover{
+          background-color: lighten(@gold, 3%);
+          border-bottom: 1px dotted @grey;
+        }
+
+        .name{
+          display: inline-block;
+        }
+        .price{
+          float: right;
+          text-align: right;
+          padding-right: 10px;
+          display: inline-block;
+
+        }
+        .addToCart{
+          float: right;
+        }
+      }
+    }
   }
 }
-
+.button{
+  display: inline-block;
+  background-color: lighten(@grey, 10%);
+  display: inline-block;
+  cursor: pointer;
+  color: @black;
+  padding: 0px 5px;
+  .rounded(5px);
+  &:hover{
+    color: @gold;
+    background-color: @grey;
+  }
+}
+.clear{
+  clear:both;
+}
 
 
 

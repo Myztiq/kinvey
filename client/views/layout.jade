@@ -7,8 +7,8 @@ html
     link(href='http://fonts.googleapis.com/css?family=Open+Sans:400,700', rel='stylesheet', type='text/css')
     block styles
   body
-    div#loading(data-bind="fadeVisible: !loginInitialized()") Loading...
-    div(data-bind="fadeVisible: loginInitialized()", style="display: none")
+    div#loading(data-bind="fadeVisible: !loginInitialized() || !$root.initialized()") Loading...
+    div(data-bind="fadeVisible: loginInitialized() && $root.initialized()", style="display: none")
       #header(data-bind="with: loginObject")
         div(data-bind="visible: !user()")
           a(data-bind="click: showLogin") Login
