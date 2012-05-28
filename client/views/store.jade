@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  #store(data-bind="slideVisible: loginObject().user()")
+    div(data-bind="visible: initialized()", style="display: none")
+      h1 Welcome to the store!
+      div(data-bind="template: { foreach: errors }")
+        span(data-bind="text: message")
+        br
+      .cart
+        span You have
+        span(data-bind="text: ' '+cartItems()+' item'+ (cartItems()==1? '': 's')+ ' in your cart'")
+        span(data-bind="text: ' for a total of $'+cartPrice()")
+      .categorySelection
+        div(data-bind="foreach: storeCategories")
+          .category(data-bind="text: $data, click: $parent.selectCategory")
+      .storeItems(data-bind="foreach: storeItems")
+        .item(data-bind="slideVisible: category() == $parent.selectedCategory()")
+          .name(data-bind="text: name")
+          .addToCart(data-bind="click: $root.addToCart") Add To Cart
+          .price(data-bind="text: price")
+
+
+block scripts
+  script
+    head.ready(function(){
+      head.js('/scripts/store.js');
+    });

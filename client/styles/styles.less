@@ -69,6 +69,60 @@ body{
   }
 }
 
+#store{
+  .categorySelection{
+    font-size: 25px;
+    .category{
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px;
+      margin: 5px;
+      .rounded(5px);
+      color: @black;
+      background-color: lighten(@grey, 10%);
+      display: inline-block;
+      &:hover{
+        color: @gold;
+        background-color: @grey;
+      }
+    }
+  }
+  .storeItems{
+    padding-top: 15px;
+    .item{
+      border-bottom: 1px dotted transparent;
+      &:hover{
+        background-color: lighten(@gold, 3%);
+        border-bottom: 1px dotted @grey;
+      }
+
+      .name{
+        display: inline-block;
+      }
+      .price{
+        float: right;
+        text-align: right;
+        padding-right: 10px;
+        display: inline-block;
+
+      }
+      .addToCart{
+        float: right;
+        display: inline-block;
+        background-color: lighten(@grey, 10%);
+        display: inline-block;
+        cursor: pointer;
+        color: @black;
+        padding: 0px 5px;
+        .rounded(5px);
+        &:hover{
+          color: @gold;
+          background-color: @grey;
+        }
+      }
+    }
+  }
+}
 
 
 

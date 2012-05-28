@@ -62,15 +62,18 @@
     //INITIALIZATION
 
     self.setup = function(){
+      if(!self.loginObject().user()){
+        return;
+      }
       var kListCollection = new Kinvey.Collection('list-collection');
       kListCollection.fetch({
         success: function(list) {
           self.todoList([]);
           for(var i=0;i<list.length;i++){
             //This check should not need to be here... When I fetch from the list-collection it should only return items that I have access to read...
-            //if(list[i].attr._acl.creator == self.loginObject().user().getUsername()){
+            if(list[i].attr._acl.creator == self.loginObject().user().getUsername()){
               self.todoList.push(new ListItem(list[i]));
-            //}
+            }
           }
           self.sort();
           self.initialized(true);
