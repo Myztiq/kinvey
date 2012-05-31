@@ -7,7 +7,7 @@ block content
         .button.viewCart(data-bind="click: viewStore, text:'View Store', css:{active:showStore()}")
         .button.viewCart(data-bind="click: viewCart, visible: cartItems, text: 'View Cart ('+cartItems()+')', css:{cartUpdated: cartUpdated()}, css:{active:showCart()}")
         .button.viewCart(data-bind="click: viewOrderHistory, visible: orderHistory().length, text: 'View Order History', css:{active:showOrderHistory()}")
-      h1 awesome without me is only awe..so
+      h1 awesome without me is only awe... so?
       div(data-bind="template: { foreach: errors }")
         span(data-bind="text: message")
         br
@@ -38,7 +38,7 @@ block content
         .subTotal
           | Subtotal:
           span(data-bind="text: cartPrice(), css:{priceUpdated: cartUpdated()}")
-        .button.checkout(data-bind="click: checkout") Checkout
+        .button.checkout(data-bind="click: viewCheckout") Checkout
         .clear
       .orderHistoryView(data-bind="slideVisible: showOrderHistory()")
         h3 Order History
@@ -66,6 +66,30 @@ block content
               .subTotal
                 | Total:
                 span(data-bind="text: orderPrice()")
+              .shipping(data-bind="visible: typeof orderDetails().shipping != 'undefined', if: typeof orderDetails().shipping != 'undefined'")
+                h3 Shipping Details
+                span(data-bind="text: orderDetails().shipping.name")
+                br
+                span(data-bind="text: orderDetails().shipping.street")
+                br
+                span(data-bind="text: orderDetails().shipping.city")
+                span(data-bind="text: ' '+orderDetails().shipping.state")
+                span(data-bind="text: ', '+orderDetails().shipping.zipCode")
+                br
+                span(data-bind="text: orderDetails().shipping.phone")
+              .billing(data-bind="visible: typeof orderDetails().billing != 'undefined', if: typeof orderDetails().billing != 'undefined'")
+                h3 Billing Details
+                span(data-bind="text: orderDetails().billing.name")
+                br
+                span(data-bind="text: orderDetails().billing.street")
+                br
+                span(data-bind="text: orderDetails().billing.city")
+                span(data-bind="text: ' '+orderDetails().billing.state")
+                span(data-bind="text: ', '+orderDetails().billing.zipCode")
+                br
+                span(data-bind="text: orderDetails().billing.phone")
+
+
 
       .storeView(data-bind="slideVisible: showStore()")
         h3 Store
@@ -78,6 +102,54 @@ block content
             .name(data-bind="text: name")
             .addToCart.button(data-bind="click: $root.addToCart") Add To Cart
             .price(data-bind="text: formattedPrice")
+      .orderDetails(data-bind="slideVisible: showCheckout()")
+        .orderSummary
+          table
+            thead
+              th(width="900px") Name
+              th(width="100px").price Price
+              th(width="40px").qty Qty
+            tbody
+              | <!-- ko foreach: cart -->
+              tr
+                td
+                  div(data-bind="text: item.name()")
+                td.price
+                  div(data-bind="text: item.formattedPrice()")
+                td.qty
+                  div(data-bind="text: tmpQty")
+              | <!-- /ko-->
+          .subTotal
+            | Total:
+            span(data-bind="text: cartPrice()")
+        .left
+          form
+            h3 Shipping Details
+            input.threeWide(data-bind="value:orderName", placeholder="Name")
+            br
+            input.threeWide(data-bind="value:orderStreet", placeholder="Street")
+            br
+            input.city(data-bind="value:orderCity", placeholder="City")
+            input.state(data-bind="value:orderState", placeholder="State")
+            input.zip(data-bind="value:orderZipCode", placeholder="Zip")
+            br
+            input.threeWide(data-bind="value:orderPhone", placeholder="Phone")
+          br
+          .button(data-bind="click: copyShippingToBilling") Copy shipping details to billing details
+          br
+          form
+            h3 Billing Details
+            input.threeWide(data-bind="value:orderBillingName", placeholder="Name")
+            br
+            input.threeWide(data-bind="value:orderBillingStreet", placeholder="Street")
+            br
+            input.city(data-bind="value:orderBillingCity", placeholder="City")
+            input.state(data-bind="value:orderBillingState", placeholder="State")
+            input.zip(data-bind="value:orderBillingZipCode", placeholder="Zip")
+            br
+            input.threeWide(data-bind="value:orderBillingPhone", placeholder="Phone")
+        .button.checkout(data-bind="click: checkout") Place Order
+
 
 block scripts
   script

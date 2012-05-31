@@ -34,6 +34,10 @@ body{
     display: inline-block;
     text-align: right;
     padding-right: 4px;
+    &.inline{
+      min-width: 0px;
+      padding-left: 5px;
+    }
   }
   .wrapper{
     width: @pageWidth;
@@ -84,13 +88,6 @@ body{
     margin-top: 20px;
   }
   .cartView{
-    .checkout{
-      float: right;
-      margin-right: 110px;
-      padding: 20px;
-      margin-top: 8px;
-      border: 2px solid @red;
-    }
     table{
       width: 100%;
       input{
@@ -163,6 +160,36 @@ body{
       background-color: lighten(@grey, 30%);
     }
   }
+  .orderDetails{
+    .orderSummary{
+      width: 512px;
+      margin-left: 10px;
+      display: inline-block;
+      float: right;
+    }
+    .checkout{
+      margin-left: 30px;
+      float: none;
+    }
+    .left{
+      display: inline-block;
+      width: 272px;
+      .threeWide{
+        width: 265px;
+      }
+      .city{
+        width: 171px;
+      }
+      .state{
+        margin-left: 5px;
+        margin-right: 5px;
+        width: 35px;
+      }
+      .zip{
+        width: 40px;
+      }
+    }
+  }
   .orders{
     .orderHeader{
       .price{
@@ -190,6 +217,13 @@ body{
         tr:nth-child(2n){
           background-color: lighten(@gold, 5%);
         }
+        .shipping, .billing{
+          display: inline-block;
+          background-color: @brown;
+          .rounded(2px);
+          padding: 5px 60px;
+          margin-left: 20px;
+        }
       }
     }
   }
@@ -216,6 +250,13 @@ body{
   clear:both;
 }
 
+.checkout{
+  float: right;
+  margin-right: 110px;
+  padding: 20px;
+  margin-top: 8px;
+  border: 2px solid @red;
+}
 
 
 .diagonalBackground(@color:grey, @angle:-45deg, @change:2%, @size:10px){

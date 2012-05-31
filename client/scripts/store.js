@@ -12,9 +12,24 @@
     self.showCart = ko.booleanObservable(false);
     self.showStore = ko.booleanObservable(true);
     self.showOrderHistory = ko.booleanObservable(false);
+    self.showCheckout = ko.booleanObservable(false);
     self.cartUpdated = ko.booleanObservable(false);
     self.saveCartData = ko.booleanObservable(false);
     self.orderHistory = ko.observableArray([]);
+
+    self.orderStreet = ko.observable('');
+    self.orderZipCode = ko.observable('');
+    self.orderState = ko.observable('');
+    self.orderPhone = ko.observable('');
+    self.orderName = ko.observable('');
+    self.orderCity = ko.observable('');
+
+    self.orderBillingStreet = ko.observable('');
+    self.orderBillingZipCode = ko.observable('');
+    self.orderBillingState = ko.observable('');
+    self.orderBillingPhone = ko.observable('');
+    self.orderBillingName = ko.observable('');
+    self.orderBillingCity = ko.observable('');
 
     self.cart = ko.observableArray([]);
     self.cart.subscribe(function(){
@@ -59,21 +74,65 @@
     //METHODS
     //METHODS
 
+    self.copyShippingToBilling = function(){
+      self.orderBillingStreet(self.orderStreet());
+      self.orderBillingZipCode(self.orderZipCode());
+      self.orderBillingState(self.orderState());
+      self.orderBillingPhone(self.orderPhone());
+      self.orderBillingName(self.orderName());
+      self.orderBillingCity(self.orderCity());
+    }
+
     self.checkout = function(){
-      var order = new KOrderHistory();
-      order.set('date', (new Date()).getTime());
-      order.set('order',ko.toJS(self.cart));
-      order.save({
-        success: function(){
-          self.cart([]);
-          self.populateOrderHistory();
-          self.setView('orderHistory');
+      var  orderDetails = {
+            shipping:{
+                street: self.orderStreet()
+              , zipCode: self.orderZipCode()
+              , state: self.orderState()
+              , phone: self.orderPhone()
+              , name: self.orderName()
+              , city: self.orderCity()
+            },
+            billing:{
+                street: self.orderBillingStreet()
+              , zipCode: self.orderBillingZipCode()
+              , state: self.orderBillingState()
+              , phone: self.orderBillingPhone()
+              , name: self.orderBillingName()
+              , city: self.orderBillingCity()
+            }
+          }
+        , valid = true;
+      for(var orderType in orderDetails){
+        for(var orderItem in orderDetails[orderType]){
+          if(!orderDetails[orderType][orderItem].length){
+            valid = false
+          }
         }
-      });
+      }
+
+      if(!valid){
+        alert('All the form fields are required.');
+      }else{
+        var order = new KOrderHistory();
+        order.set('date', (new Date()).getTime());
+        order.set('order',ko.toJS(self.cart));
+        order.set('details',orderDetails);
+        order.save({
+          success: function(){
+            self.cart([]);
+            self.populateOrderHistory();
+            self.setView('orderHistory');
+          }
+        });
+      }
     }
 
     self.viewStore = function(){
       self.setView('store');
+    }
+    self.viewCheckout = function(){
+      self.setView('checkout');
     }
     self.viewCart = function(){
       self.setView('cart');
@@ -82,13 +141,22 @@
       self.setView('orderHistory');
     }
 
+    var activeView = '';
     self.setView = function(view){
+      if(activeView == view){
+        return;
+      }
+      activeView = view;
       self.showStore(false);
       self.showOrderHistory(false);
       self.showCart(false);
+      self.showCheckout(false);
       switch (view){
         case 'store':
           self.showStore(true);
+          break;
+        case 'checkout':
+          self.showCheckout(true);
           break;
         case 'cart':
           self.showCart(true);
@@ -323,6 +391,10 @@
       , kOrderDate = kOrderHistory.get('date');
     self.order = ko.observableArray([]);
     self.orderDate = ko.observable(moment(kOrderDate).format('dddd, MMMM Do YYYY, h:mm a'));
+    self.orderDetails = ko.observable(kOrderHistory.get('details'));
+    if(!self.orderDetails()){
+      self.orderDetails({});
+    }
     self.orderPrice = ko.computed(function(){
       var cart = self.order()
         , total = 0;
