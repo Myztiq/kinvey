@@ -65,9 +65,9 @@
       order.set('order',ko.toJS(self.cart));
       order.save({
         success: function(){
-          alert('Checkout Success!');
           self.cart([]);
           self.populateOrderHistory();
+          self.setView('orderHistory');
         }
       });
     }

@@ -7,7 +7,7 @@ block content
         .button.viewCart(data-bind="click: viewStore, text:'View Store', css:{active:showStore()}")
         .button.viewCart(data-bind="click: viewCart, visible: cartItems, text: 'View Cart ('+cartItems()+')', css:{cartUpdated: cartUpdated()}, css:{active:showCart()}")
         .button.viewCart(data-bind="click: viewOrderHistory, visible: orderHistory().length, text: 'View Order History', css:{active:showOrderHistory()}")
-      h1 Welcome to the store!
+      h1 awesome without me is only awe..so
       div(data-bind="template: { foreach: errors }")
         span(data-bind="text: message")
         br
@@ -78,7 +78,6 @@ block content
             .name(data-bind="text: name")
             .addToCart.button(data-bind="click: $root.addToCart") Add To Cart
             .price(data-bind="text: formattedPrice")
-
 
 block scripts
   script
