@@ -4,13 +4,15 @@ block content
   #store(data-bind="slideVisible: loginObject().user()")
     div
       .cart
-        .button.viewCart(data-bind="click: toggleViewCart, visible: showCart(), text:'View Store'")
-        .button.viewCart(data-bind="click: toggleViewCart, visible: !showCart(), text: 'View Cart ('+cartItems()+')', css:{cartUpdated: cartUpdated()}")
+        .button.viewCart(data-bind="click: viewStore, text:'View Store', css:{active:showStore()}")
+        .button.viewCart(data-bind="click: viewCart, visible: cartItems, text: 'View Cart ('+cartItems()+')', css:{cartUpdated: cartUpdated()}, css:{active:showCart()}")
+        .button.viewCart(data-bind="click: viewOrderHistory, visible: orderHistory().length, text: 'View Order History', css:{active:showOrderHistory()}")
       h1 Welcome to the store!
       div(data-bind="template: { foreach: errors }")
         span(data-bind="text: message")
         br
       .cartView(data-bind="slideVisible: showCart()")
+        h3 Shopping Cart
         table
           thead
             th Name
@@ -38,8 +40,35 @@ block content
           span(data-bind="text: cartPrice(), css:{priceUpdated: cartUpdated()}")
         .button.checkout(data-bind="click: checkout") Checkout
         .clear
+      .orderHistoryView(data-bind="slideVisible: showOrderHistory()")
+        h3 Order History
+        .orders(data-bind="foreach: orderHistory")
+          .orderHeader(data-bind="click: toggleOrderBody")
+            span.date(data-bind="text: orderDate")
+            span.price(data-bind="text: orderPrice")
+            span.items(data-bind="text: orderItems()+' item'+ (orderItems()==1 ? '' : 's')")
+            .orderBody(style="display: none")
+              table
+                thead
+                  th(width="900px") Name
+                  th(width="100px").price Price
+                  th(width="40px").qty Qty
+                tbody
+                  | <!-- ko foreach: order -->
+                  tr
+                    td
+                      div(data-bind="text: item.name()")
+                    td.price
+                      div(data-bind="text: item.formattedPrice()")
+                    td.qty
+                      div(data-bind="text: tmpQty")
+                  | <!-- /ko-->
+              .subTotal
+                | Total:
+                span(data-bind="text: orderPrice()")
 
-      .storeView(data-bind="slideVisible: !showCart()")
+      .storeView(data-bind="slideVisible: showStore()")
+        h3 Store
         .categorySelection
           div(data-bind="foreach: storeCategories")
             .category.button(data-bind="text: $data, click: $parent.selectCategory, css:{active: $data == $parent.selectedCategory()}")

@@ -104,20 +104,20 @@ body{
         }
       }
     }
-    .subTotal{
-      border-top: 1px dotted @brown;
-      text-align: right;
-      padding-right: 110px;
-      font-weight: bold;
-      color: @black;
-      span{
-        padding-left: 5px;
-        color: @red;
+  }
+  .subTotal{
+    border-top: 1px dotted @brown;
+    text-align: right;
+    padding-right: 110px;
+    font-weight: bold;
+    color: @black;
+    span{
+      padding-left: 5px;
+      color: @red;
+      .transition();
+      &.priceUpdated{
         .transition();
-        &.priceUpdated{
-          .transition();
-          color: @gold;
-        }
+        color: @gold;
       }
     }
   }
@@ -158,6 +158,36 @@ body{
     &.cartUpdated{
       .transition();
       background-color: lighten(@grey, 30%);
+    }
+  }
+  .orders{
+    .orderHeader{
+      .price{
+        padding: 0px 20px;
+      }
+      .rounded(5px);
+      cursor: pointer;
+      margin: 5px;
+      border: 3px solid @brown;
+      .transition();
+      &:hover{
+        .transition();
+        border: 3px solid darken(@brown, 20%);
+      }
+      padding: 10px;
+      background-color: darken(@gold,15%);
+      &:nth-child(2n){
+        background-color: darken(@gold,10%);
+      }
+      .orderBody{
+        margin: 10px;
+        background-color: @gold;
+        .rounded(2px);
+        padding: 5px;
+        tr:nth-child(2n){
+          background-color: lighten(@gold, 5%);
+        }
+      }
     }
   }
 }

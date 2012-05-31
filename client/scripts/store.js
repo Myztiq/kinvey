@@ -10,6 +10,8 @@
     self.selectedCategory = ko.observable('');
     self.initialized = ko.booleanObservable(false);
     self.showCart = ko.booleanObservable(false);
+    self.showStore = ko.booleanObservable(true);
+    self.showOrderHistory = ko.booleanObservable(false);
     self.cartUpdated = ko.booleanObservable(false);
     self.saveCartData = ko.booleanObservable(false);
     self.orderHistory = ko.observableArray([]);
@@ -23,9 +25,11 @@
     self.loginObject().user.subscribe(function(newVal){
       if(newVal){
         self.populateCart();
+        self.populateOrderHistory();
       }else{
         self.saveCartData(false);
         self.cart([]);
+        self.orderHistory([]);
       }
     });
 
@@ -57,7 +61,8 @@
 
     self.checkout = function(){
       var order = new KOrderHistory();
-      order.set('order',ko.toJS(self.cart))
+      order.set('date', (new Date()).getTime());
+      order.set('order',ko.toJS(self.cart));
       order.save({
         success: function(){
           alert('Checkout Success!');
@@ -67,8 +72,31 @@
       });
     }
 
-    self.toggleViewCart = function(){
-      self.showCart(!self.showCart());
+    self.viewStore = function(){
+      self.setView('store');
+    }
+    self.viewCart = function(){
+      self.setView('cart');
+    }
+    self.viewOrderHistory = function(){
+      self.setView('orderHistory');
+    }
+
+    self.setView = function(view){
+      self.showStore(false);
+      self.showOrderHistory(false);
+      self.showCart(false);
+      switch (view){
+        case 'store':
+          self.showStore(true);
+          break;
+        case 'cart':
+          self.showCart(true);
+          break;
+        case 'orderHistory':
+          self.showOrderHistory(true);
+          break;
+      }
     }
 
     /**
@@ -128,6 +156,9 @@
      */
     self.removeFromCart = function(cartItem){
       self.cart.remove(cartItem);
+      if(!self.cart().length){
+        self.setView('store');
+      }
     }
 
     /**
@@ -135,9 +166,29 @@
      * @return {Object} Deferred
      */
     self.populateOrderHistory = function(){
-      var deferred = $.Deferred();
+      var deferred = $.Deferred()
+        , query = new Kinvey.Query()
+      ;
+      query.on('date').sort();
+      if(!self.loginObject().user()){
+        deferred.resolve();
+        return deferred.promise();
+      }
 
-      deferred.resolve();
+      self.orderHistory([]);
+      new Kinvey.Collection('order-history').fetch({
+        success: function(orderHistory){
+          for(var i=0;i<orderHistory.length;i++){
+            if(orderHistory[i].attr._acl.creator == self.loginObject().user().getUsername()){
+              self.orderHistory.push(new OrderHistory(orderHistory[i]));
+            }
+          }
+          deferred.resolve();
+        },
+        error: function(error){
+          deferred.reject(error.error);
+        }
+      })
       return deferred.promise();
 
     }
@@ -220,7 +271,7 @@
     //Initialization, we need the store items before we can populate the cart
     self.populateStoreItems()
     .pipe(function(){
-        return self.populateCart()
+      return $.when(self.populateCart(), self.populateOrderHistory());
     })
     .then(function(){
       self.initialized(true);
@@ -266,6 +317,42 @@
     }
   }
 
+  function OrderHistory(kOrderHistory){
+    var self = this
+      , kOrder = kOrderHistory.get('order')
+      , kOrderDate = kOrderHistory.get('date');
+    self.order = ko.observableArray([]);
+    self.orderDate = ko.observable(moment(kOrderDate).format('dddd, MMMM Do YYYY, h:mm a'));
+    self.orderPrice = ko.computed(function(){
+      var cart = self.order()
+        , total = 0;
+      for(var i=0;i<cart.length;i++){
+        total += cart[i].item.price()*cart[i].qty();
+      }
+      return '$' + addCommas(total.toFixed(2));
+    });
+
+    self.orderItems = ko.computed(function(){
+      var cart = self.order()
+        , total = 0;
+      for(var i=0;i<cart.length;i++){
+        total += cart[i].qty();
+      }
+      return total;
+    });
+
+
+    for(var i=0;i<kOrder.length;i++){
+      var cartItem = new CartItem(new StoreItem(kOrder[i].item));
+      cartItem.qty(kOrder[i].qty);
+      self.order.push(cartItem);
+    }
+    self.toggleOrderBody = function(model, evt){
+      $(evt.currentTarget).toggleClass('active');
+      $(evt.currentTarget).find('.orderBody').stop(true,true).slideToggle();
+    }
+  }
+
 
   function ErrorMessage(msg){
     var self = this;
@@ -291,6 +378,8 @@
       Kinvey.Entity.prototype.constructor.call(this, 'order-history', attributes);
     }
   });
+
+
 
 
   //Source: http://www.mredkj.com/javascript/numberFormat.html
