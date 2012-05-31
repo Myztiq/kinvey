@@ -113,16 +113,20 @@
 
       if(!valid){
         alert('All the form fields are required.');
-      }else{
+      }else if(confirm('Are you sure you want to checkout at this time?')){
         var order = new KOrderHistory();
         order.set('date', (new Date()).getTime());
         order.set('order',ko.toJS(self.cart));
         order.set('details',orderDetails);
         order.save({
           success: function(){
+            alert('Your order has been placed successfully!');
             self.cart([]);
             self.populateOrderHistory();
             self.setView('orderHistory');
+          },
+          error: function(error){
+            self.addError(error);
           }
         });
       }
