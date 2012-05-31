@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  div
+  div(data-bind="visible: showTodo()", style="display: none")
     h1 Good Day
     div(data-bind="template: { foreach: errors }")
       span(data-bind="text: message")

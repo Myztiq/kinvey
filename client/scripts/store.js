@@ -10,11 +10,25 @@
     self.selectedCategory = ko.observable('');
     self.initialized = ko.booleanObservable(false);
     self.showCart = ko.booleanObservable(false);
+    self.cartUpdated = ko.booleanObservable(false);
+    self.saveCartData = ko.booleanObservable(false);
+    self.orderHistory = ko.observableArray([]);
 
     self.cart = ko.observableArray([]);
     self.cart.subscribe(function(){
       self.updateKCart();
     })
+
+
+    self.loginObject().user.subscribe(function(newVal){
+      if(newVal){
+        self.populateCart();
+      }else{
+        self.saveCartData(false);
+        self.cart([]);
+      }
+    });
+
 
     self.cartPrice = ko.computed(function(){
       var cart = self.cart()
@@ -42,14 +56,19 @@
     //METHODS
 
     self.checkout = function(){
-      alert('TODO: Implement the checkout');
+      var order = new KOrderHistory();
+      order.set('order',ko.toJS(self.cart))
+      order.save({
+        success: function(){
+          alert('Checkout Success!');
+          self.cart([]);
+          self.populateOrderHistory();
+        }
+      });
     }
 
-    self.viewCart = function(){
-      self.showCart(true);
-    }
-    self.viewStore = function(){
-      self.showCart(false);
+    self.toggleViewCart = function(){
+      self.showCart(!self.showCart());
     }
 
     /**
@@ -57,7 +76,11 @@
      */
     self.updateKCart = function(){
       //Only update it if we have finished initializing
-      if(self.initialized()){
+      if(self.initialized() && self.saveCartData()){
+        self.cartUpdated(true);
+        setTimeout(function(){
+          self.cartUpdated(false);
+        },300);
         kCart.set('items',ko.toJS(self.cart));
         kCart.save();
       }
@@ -108,6 +131,18 @@
     }
 
     /**
+     * Initialize the order history
+     * @return {Object} Deferred
+     */
+    self.populateOrderHistory = function(){
+      var deferred = $.Deferred();
+
+      deferred.resolve();
+      return deferred.promise();
+
+    }
+
+    /**
      * Initialize the store items
      * @return {Object} Deferred
      */
@@ -147,19 +182,31 @@
      */
     self.populateCart = function(){
       var deferred = $.Deferred();
+      if(!self.loginObject().user()){
+        deferred.resolve();
+        return deferred.promise();
+      }
       new Kinvey.Collection('user-cart').fetch({
         success: function(kCarts){
-          if(kCarts.length){
-            kCart = kCarts[0];
-            var cartItems = kCarts[0].get('items');
-            for(var i=0;i<cartItems.length;i++){
-              var cartItem = new CartItem(new StoreItem(cartItems[i].item));
-              cartItem.qty(cartItems[i].qty);
-              self.cart.push(cartItem);
+          self.saveCartData(false);
+          self.cart([]);
+          var cartFound = false;
+          for(var i=0;i<kCarts.length;i++){
+            if(kCarts[i].attr._acl.creator == self.loginObject().user().getUsername()){
+              kCart = kCarts[i];
+              var cartItems = kCarts[i].get('items');
+              for(var j=0;j<cartItems.length;j++){
+                var cartItem = new CartItem(new StoreItem(cartItems[j].item));
+                cartItem.qty(cartItems[j].qty);
+                self.cart.push(cartItem);
+              }
+              cartFound = true;
             }
-          }else{
+          }
+          if(!cartFound){
             kCart = new KCart();
           }
+          self.saveCartData(true);
           deferred.resolve();
         },
         error: function(error){
@@ -226,22 +273,22 @@
   }
 
   /**
-   * Defines the KListItem for querying
-   * @type {*}
-   */
-  var KStoreItem = Kinvey.Entity.extend({
-    constructor: function(attributes) {
-      Kinvey.Entity.prototype.constructor.call(this, 'store-items', attributes);
-    }
-  });
-
-  /**
    * Defines the KCart for querying
    * @type {*}
    */
   var KCart = Kinvey.Entity.extend({
     constructor: function(attributes) {
       Kinvey.Entity.prototype.constructor.call(this, 'user-cart', attributes);
+    }
+  });
+
+  /**
+   * Defines the KOrderHistory for querying
+   * @type {*}
+   */
+  var KOrderHistory = Kinvey.Entity.extend({
+    constructor: function(attributes) {
+      Kinvey.Entity.prototype.constructor.call(this, 'order-history', attributes);
     }
   });
 

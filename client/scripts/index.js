@@ -5,7 +5,9 @@
     self.loginObject = ko.observable(loginObject());
 
 
-    self.initialized = ko.booleanObservable(false);
+    self.initialized = ko.booleanObservable(true);
+    self.showTodo = ko.booleanObservable(false);
+
     self.todoList = ko.observableArray([]);
     self.newListItemText = ko.observable();
     self.showCompleted = ko.booleanObservable(true);
@@ -15,7 +17,7 @@
       if(newVal){
         self.setup();
       }else{
-        self.initialized(false);
+        self.showTodo(false);
       }
     })
 
@@ -76,7 +78,7 @@
             }
           }
           self.sort();
-          self.initialized(true);
+          self.showTodo(true);
         },
         error: function(error) {
           index.addError(error.error);

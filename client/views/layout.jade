@@ -19,7 +19,7 @@ html
           a(data-bind="click: logout") Logout
       .wrapper
         div(data-bind="with: loginObject")
-          form(data-bind="slideVisible: loginVisible, submit: login")
+          form.login(data-bind="slideVisible: loginVisible, submit: login")
             label
               span Username
               input(data-bind="value: username")
@@ -29,7 +29,7 @@ html
               input(data-bind="value: password", type="password")
             br
             button Login
-          form(data-bind="slideVisible: registerVisible, submit: register")
+          form.register(data-bind="slideVisible: registerVisible, submit: register")
             label
               span Username
               input(data-bind="value: username")

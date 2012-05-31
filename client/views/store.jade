@@ -3,17 +3,20 @@ extends layout
 block content
   #store(data-bind="slideVisible: loginObject().user()")
     div
+      .cart
+        .button.viewCart(data-bind="click: toggleViewCart, visible: showCart(), text:'View Store'")
+        .button.viewCart(data-bind="click: toggleViewCart, visible: !showCart(), text: 'View Cart ('+cartItems()+')', css:{cartUpdated: cartUpdated()}")
       h1 Welcome to the store!
       div(data-bind="template: { foreach: errors }")
         span(data-bind="text: message")
         br
       .cartView(data-bind="slideVisible: showCart()")
-        .button.viewStore(data-bind="click: viewStore") View Store
         table
           thead
             th Name
             th(width="100px").price Price
             th(width="40px").qty Qty
+            th(width="20px")
             th(width="100px")
           tbody
             | <!-- ko foreach: cart -->
@@ -24,25 +27,23 @@ block content
                 div(data-bind="text: item.formattedPrice()")
               td.qty
                 input(data-bind="value: tmpQty, valueUpdate:'afterkeydown'", type="number", min="0", max="999")
+              td.remove
+                .button(data-bind="click: $root.removeFromCart") X
               td
                 .button(data-bind="click: updateQty, visible: tmpQty() != qty() && tmpQty() > 0") Update
                 .button(data-bind="click: $root.removeFromCart, visible: tmpQty() <= 0") Remove
             | <!-- /ko-->
         .subTotal
           | Subtotal:
-          span(data-bind="text: cartPrice()")
+          span(data-bind="text: cartPrice(), css:{priceUpdated: cartUpdated()}")
         .button.checkout(data-bind="click: checkout") Checkout
         .clear
 
       .storeView(data-bind="slideVisible: !showCart()")
-        .cart
-          span You have
-          span(data-bind="text: ' '+cartItems()+' item'+ (cartItems()==1? '': 's')+ ' in your cart'")
-          span(data-bind="text: ' for a total of '+cartPrice()")
-          .button.viewCart(data-bind="click: viewCart") View Cart
         .categorySelection
           div(data-bind="foreach: storeCategories")
-            .category(data-bind="text: $data, click: $parent.selectCategory")
+            .category.button(data-bind="text: $data, click: $parent.selectCategory, css:{active: $data == $parent.selectedCategory()}")
+        .noneShown(data-bind="slideVisible: !selectedCategory()") Select a category above
         .storeItems(data-bind="foreach: storeItems")
           .item(data-bind="slideVisible: category() == $parent.selectedCategory()")
             .name(data-bind="text: name")

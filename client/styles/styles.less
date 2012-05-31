@@ -1,10 +1,10 @@
 @import "/styles/elements";
 
 @black: rgb(2,3,4);
-@red: rgb(84,31,20);
-@brown: rgb(147,129,114);
-@gold: rgb(204,158,97);
-@grey: rgb(98,98,102);
+@red: rgb(243,134,48);
+@gold: rgb(237,241,216);
+@brown: rgb(224,228,204);
+@grey: rgb(83,119,122);
 @pageWidth:800px;
 body{
   font-family: 'Open Sans', sans-serif;
@@ -20,6 +20,11 @@ body{
       color: lighten(@black, 20%);
       border-bottom: 1px dotted lighten(@black, 20%);
     }
+  }
+  form.login,form.register{
+    width: 243px;
+    margin: auto;
+    padding-top: 126px;
   }
   form label span{
     min-width: 80px;
@@ -70,6 +75,11 @@ body{
 }
 
 #store{
+  .noneShown{
+    font-size: 17px;
+    text-align: center;
+    margin-top: 20px;
+  }
   .cartView{
     .checkout{
       float: right;
@@ -103,6 +113,11 @@ body{
       span{
         padding-left: 5px;
         color: @red;
+        .transition();
+        &.priceUpdated{
+          .transition();
+          color: @gold;
+        }
       }
     }
   }
@@ -110,18 +125,7 @@ body{
     .categorySelection{
       font-size: 25px;
       .category{
-        cursor: pointer;
         font-size: 16px;
-        padding: 10px;
-        margin: 5px;
-        .rounded(5px);
-        color: @black;
-        background-color: lighten(@grey, 10%);
-        display: inline-block;
-        &:hover{
-          color: @gold;
-          background-color: @grey;
-        }
       }
     }
     .storeItems{
@@ -149,19 +153,31 @@ body{
       }
     }
   }
+  .viewCart{
+    .transition();
+    &.cartUpdated{
+      .transition();
+      background-color: lighten(@grey, 30%);
+    }
+  }
 }
 .button{
   display: inline-block;
   background-color: lighten(@grey, 10%);
   display: inline-block;
   cursor: pointer;
-  color: @black;
+  color: @gold;
   padding: 0px 5px;
   .rounded(5px);
+  margin: 0px 2px;
   &:hover{
-    color: @gold;
+    color: @brown;
     background-color: @grey;
   }
+  &.active{
+    background-color: darken(@grey, 20%)
+  }
+
 }
 .clear{
   clear:both;
