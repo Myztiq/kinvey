@@ -76,7 +76,7 @@ block content
                 span(data-bind="text: ' '+orderDetails().shipping.state")
                 span(data-bind="text: ', '+orderDetails().shipping.zipCode")
                 br
-                span(data-bind="text: orderDetails().shipping.phone")
+                span(data-bind="text: formatPhone(orderDetails().shipping.phone)")
               .billing(data-bind="visible: typeof orderDetails().billing != 'undefined', if: typeof orderDetails().billing != 'undefined'")
                 h3 Billing Details
                 span(data-bind="text: orderDetails().billing.name")
@@ -87,7 +87,7 @@ block content
                 span(data-bind="text: ' '+orderDetails().billing.state")
                 span(data-bind="text: ', '+orderDetails().billing.zipCode")
                 br
-                span(data-bind="text: orderDetails().billing.phone")
+                span(data-bind="text: formatPhone(orderDetails().billing.phone)")
 
 
 
@@ -123,33 +123,32 @@ block content
             | Total:
             span(data-bind="text: cartPrice()")
         .left
-          form
+          form(data-bind="submit: checkout")
             h3 Shipping Details
-            input.threeWide(data-bind="value:orderName", placeholder="Name")
+            input.threeWide(data-bind="value:orderName", placeholder="Name", required)
             br
-            input.threeWide(data-bind="value:orderStreet", placeholder="Street")
+            input.threeWide(data-bind="value:orderStreet", placeholder="Street", required)
             br
-            input.city(data-bind="value:orderCity", placeholder="City")
-            input.state(data-bind="value:orderState", placeholder="State")
-            input.zip(data-bind="value:orderZipCode", placeholder="Zip")
+            input.city(data-bind="value:orderCity", placeholder="City", required)
+            input.state(data-bind="value:orderState", placeholder="State", required, type="state", pattern="[a-zA-Z]{2}", title="Two letter state abbreviation only")
+            input.zip(data-bind="value:orderZipCode", placeholder="Zip", required, type="zip", pattern="[0-9]{5}", title="5 digit zip code only")
             br
-            input.threeWide(data-bind="value:orderPhone", placeholder="Phone")
-          br
-          .button(data-bind="click: copyShippingToBilling") Copy shipping details to billing details
-          br
-          form
+            input.threeWide(data-bind="value:orderPhoneFormatted, valueUpdate:'afterkeydown'", placeholder="Phone", required, type="tel")
+            br
+            .button(data-bind="click: copyShippingToBilling") Copy shipping details to billing details
+            br
             h3 Billing Details
-            input.threeWide(data-bind="value:orderBillingName", placeholder="Name")
+            input.threeWide(data-bind="value:orderBillingName", placeholder="Name", required)
             br
-            input.threeWide(data-bind="value:orderBillingStreet", placeholder="Street")
+            input.threeWide(data-bind="value:orderBillingStreet", placeholder="Street", required)
             br
-            input.city(data-bind="value:orderBillingCity", placeholder="City")
-            input.state(data-bind="value:orderBillingState", placeholder="State")
-            input.zip(data-bind="value:orderBillingZipCode", placeholder="Zip")
+            input.city(data-bind="value:orderBillingCity", placeholder="City", required)
+            input.state(data-bind="value:orderBillingState", placeholder="State", required, type="state", pattern="[a-zA-Z]{2}", title="Two letter state abbreviation only")
+            input.zip(data-bind="value:orderBillingZipCode", placeholder="Zip", required, type="zip", pattern="[0-9]{5}", title="5 digit zip code only")
             br
-            input.threeWide(data-bind="value:orderBillingPhone", placeholder="Phone")
-        .button.checkout(data-bind="click: checkout") Place Order
-        .button.cancel(data-bind="click: viewCart") Cancel
+            input.threeWide(data-bind="value:orderBillingPhoneFormatted, valueUpdate:'afterkeydown'", placeholder="Phone", required, type="tel")
+            input.button.checkout(type="submit", value="Place Order")
+            .button.cancel(data-bind="click: viewCart") Cancel
 
 
 block scripts

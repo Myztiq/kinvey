@@ -1,9 +1,9 @@
-function loginObject(){
+function loginObject(parent){
   Kinvey.init({
     appKey: 'kid1711',
     appSecret: 'c541ea1210a54dc1a60df0b6ac8b9575'
   });
-
+  var parent = parent;
   return Login();
 
   function Login(){
@@ -59,8 +59,7 @@ function loginObject(){
           }));
         },
         error: function(error) {
-          console.log(error);
-          alert(error.error);
+          parent.addError(error.error);
         }
       });
     }
@@ -80,8 +79,7 @@ function loginObject(){
           }));
         },
         error: function(error) {
-          console.log(error);
-          alert(error.error);
+          parent.addError(error.error);
         }
       });
     }
@@ -124,8 +122,7 @@ function loginObject(){
             self.loginInitialized(true);
           },
           error: function(error) {
-            console.log(error);
-            alert(error.error);
+            parent.addError(error.error);
           }
         });
       }else{

@@ -3,7 +3,7 @@
     var self = this
       , kCart = null;
     //This includes the login info on the page (required to have happen if we utilize the base layout because it depends on the loginObject)
-    self.loginObject = ko.observable(loginObject());
+    self.loginObject = ko.observable(loginObject(this));
     self.storeItems = ko.observableArray([]);
     self.errors = ko.observableArray([]);
     self.storeCategories = ko.observableArray([]);
@@ -30,6 +30,28 @@
     self.orderBillingPhone = ko.observable('');
     self.orderBillingName = ko.observable('');
     self.orderBillingCity = ko.observable('');
+
+    self.orderPhoneFormatted = ko.computed({
+      read: function () {
+        return formatPhone(this.orderPhone());
+      },
+      write: function (value) {
+        value = value.replace(/[^0-9]+/g, "");
+        this.orderPhone(value);
+      },
+      owner: this
+    });
+
+    self.orderBillingPhoneFormatted = ko.computed({
+      read: function () {
+        return formatPhone(this.orderBillingPhone());
+      },
+      write: function (value) {
+        value = value.replace(/[^0-9]+/g, "");
+        this.orderBillingPhone(value);
+      },
+      owner: this
+    });
 
     self.cart = ko.observableArray([]);
     self.cart.subscribe(function(){
@@ -78,7 +100,7 @@
       self.orderBillingStreet(self.orderStreet());
       self.orderBillingZipCode(self.orderZipCode());
       self.orderBillingState(self.orderState());
-      self.orderBillingPhone(self.orderPhone());
+      self.orderBillingPhoneFormatted(self.orderPhoneFormatted());
       self.orderBillingName(self.orderName());
       self.orderBillingCity(self.orderCity());
     }
@@ -110,17 +132,28 @@
           }
         }
       }
-
       if(!valid){
-        alert('All the form fields are required.');
-      }else if(confirm('Are you sure you want to checkout at this time?')){
+        self.addError('All the form fields are required.');
+      }
+      //If the formatter cannot detect the phone type then it must be invalid
+      if(formatPhone(orderDetails.shipping.phone) == orderDetails.shipping.phone){
+        valid = false;
+        self.addError('Your shipping phone is invalid.');
+      }
+      //If the formatter cannot detect the phone type then it must be invalid
+      if(formatPhone(orderDetails.billing.phone) == orderDetails.billing.phone){
+        valid = false;
+        self.addError('Your billing phone is invalid.');
+      }
+
+      if(valid){
         var order = new KOrderHistory();
         order.set('date', (new Date()).getTime());
         order.set('order',ko.toJS(self.cart));
         order.set('details',orderDetails);
         order.save({
           success: function(){
-            alert('Your order has been placed successfully!');
+            self.addError('Your order has been placed successfully!');
             self.cart([]);
             self.populateOrderHistory();
             self.setView('orderHistory');
@@ -192,7 +225,7 @@
       self.errors.push(error);
       setTimeout(function(){
         self.errors.remove(error);
-      },1000);
+      },2000);
     }
 
     /**
@@ -348,8 +381,8 @@
     .then(function(){
       self.initialized(true);
     })
-    .fail(function(){
-      console.log(arguments);
+    .fail(function(error){
+        self.addError(error.error);
     })
     self.populateStoreItems();
   }
@@ -457,8 +490,12 @@
 
 
 
-
-  //Source: http://www.mredkj.com/javascript/numberFormat.html
+  /**
+   * Add commas into the numeeric value (1000 -> 1,000)
+   * Source: http://www.mredkj.com/javascript/numberFormat.html
+   * @param nStr
+   * @return {string}
+   */
   function addCommas(nStr){
     nStr += '';
     x = nStr.split('.');
@@ -476,3 +513,25 @@
   //The magic line that starts the entire chain rolling with knockout.
   ko.applyBindings(store);
 })();
+
+
+/**
+ * Formats the input phone number and returns a string of the phone number
+ * Source: http://grover.open2space.com/content/javascript-formatting-phone-numbers-and-postal-codes
+ * @param phonenum
+ * @return {string}
+ */
+function formatPhone(phonenum) {
+  var regexObj = /^(?:\+?1[-. ]?)?(?:\(?([0-9]{3})\)?[-. ]?)?([0-9]{3})[-. ]?([0-9]{4})$/;
+  if (regexObj.test(phonenum)) {
+    var parts = phonenum.match(regexObj);
+    var phone = "";
+    if (parts[1]) { phone += "+1 (" + parts[1] + ") "; }
+    phone += parts[2] + "-" + parts[3];
+    return phone;
+  }
+  else {
+    //invalid phone number
+    return phonenum;
+  }
+}
