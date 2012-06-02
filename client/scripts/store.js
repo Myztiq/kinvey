@@ -95,16 +95,21 @@
     //METHODS
     //METHODS
     //METHODS
-
+    /**
+     * Copies the shipping information to the billing information
+     */
     self.copyShippingToBilling = function(){
       self.orderBillingStreet(self.orderStreet());
       self.orderBillingZipCode(self.orderZipCode());
       self.orderBillingState(self.orderState());
-      self.orderBillingPhoneFormatted(self.orderPhoneFormatted());
+      //By updating the formatted number it also updates the non-formatted one
+      self.orderBillingPhoneFormatted(self.orderPhone());
       self.orderBillingName(self.orderName());
       self.orderBillingCity(self.orderCity());
     }
-
+    /**
+     * Processes the final checkout process
+     */
     self.checkout = function(){
       var  orderDetails = {
             shipping:{
@@ -219,7 +224,10 @@
       }
     }
 
-
+    /**
+     * Adds an error to the page which will be removed after x seconds
+     * @param message
+     */
     self.addError = function(message){
       var error = new ErrorMessage(message);
       self.errors.push(error);
@@ -387,6 +395,11 @@
     self.populateStoreItems();
   }
 
+  /**
+   * Takes the raw data from a kStore item and maps it to a knockout style store item
+   * @param storeItemData
+   * @constructor
+   */
   function StoreItem(storeItemData){
     var self = this;
     self.category = ko.observable(storeItemData.category);
@@ -406,6 +419,11 @@
     });
   }
 
+  /**
+   * Takes a store item and returns a knockout style cart item with quantity
+   * @param StoreItem
+   * @constructor
+   */
   function CartItem(StoreItem){
     var self = this;
     self.qty = ko.numericObservable(1);
@@ -422,6 +440,11 @@
     }
   }
 
+  /**
+   * Takes a Kinvey order history object and returns back a knockout style order history mapping
+   * @param kOrderHistory
+   * @constructor
+   */
   function OrderHistory(kOrderHistory){
     var self = this
       , kOrder = kOrderHistory.get('order')
@@ -462,7 +485,11 @@
     }
   }
 
-
+  /**
+   * Error message object where an error message will be added to the page
+   * @param msg
+   * @constructor
+   */
   function ErrorMessage(msg){
     var self = this;
     self.message = ko.observable(msg);
@@ -516,7 +543,7 @@
 
 
 /**
- * Formats the input phone number and returns a string of the phone number
+ * Formats the input phone number and returns a string of the phone number. This was brought out into the global namespace because it is being used on the page as a utility method for display purposes.
  * Source: http://grover.open2space.com/content/javascript-formatting-phone-numbers-and-postal-codes
  * @param phonenum
  * @return {string}
