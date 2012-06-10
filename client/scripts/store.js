@@ -292,9 +292,7 @@
       new Kinvey.Collection('order-history').fetch({
         success: function(orderHistory){
           for(var i=0;i<orderHistory.length;i++){
-            if(orderHistory[i].attr._acl.creator == self.loginObject().user().getUsername()){
-              self.orderHistory.push(new OrderHistory(orderHistory[i]));
-            }
+            self.orderHistory.push(new OrderHistory(orderHistory[i]));
           }
           deferred.resolve();
         },
@@ -356,16 +354,14 @@
           self.cart([]);
           var cartFound = false;
           for(var i=0;i<kCarts.length;i++){
-            if(kCarts[i].attr._acl.creator == self.loginObject().user().getUsername()){
-              kCart = kCarts[i];
-              var cartItems = kCarts[i].get('items');
-              for(var j=0;j<cartItems.length;j++){
-                var cartItem = new CartItem(new StoreItem(cartItems[j].item));
-                cartItem.qty(cartItems[j].qty);
-                self.cart.push(cartItem);
-              }
-              cartFound = true;
+            kCart = kCarts[i];
+            var cartItems = kCarts[i].get('items');
+            for(var j=0;j<cartItems.length;j++){
+              var cartItem = new CartItem(new StoreItem(cartItems[j].item));
+              cartItem.qty(cartItems[j].qty);
+              self.cart.push(cartItem);
             }
+            cartFound = true;
           }
           if(!cartFound){
             kCart = new KCart();

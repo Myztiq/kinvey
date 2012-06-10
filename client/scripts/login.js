@@ -51,12 +51,9 @@ function loginObject(parent){
       }, {
         success: function(user) {
           self.user(user);
+          self.password('');
           self.loginVisible(false);
           self.registerVisible(false);
-          $.cookie('user',JSON.stringify({
-              username: self.username()
-            , password: self.password()
-          }));
         },
         error: function(error) {
           parent.addError(error.error);
@@ -73,10 +70,7 @@ function loginObject(parent){
           self.user(user);
           self.loginVisible(false);
           self.registerVisible(false);
-          $.cookie('user',JSON.stringify({
-              username: self.username()
-            , password: self.password()
-          }));
+          self.password('');
         },
         error: function(error) {
           parent.addError(error.error);
@@ -90,7 +84,6 @@ function loginObject(parent){
     self.logout = function(){
       var user = Kinvey.getCurrentUser();
       if(null !== user) {
-        $.cookie('user',null);
         user.logout();
       }
       self.user(false);
@@ -110,26 +103,10 @@ function loginObject(parent){
     var user = Kinvey.getCurrentUser();
     if(user){
       self.user(user);
-      self.loginInitialized(true);
     }else{
-      //Workaround for non-sticky user logins
-      var userCookie = $.cookie('user');
-      if(userCookie){
-        userCookie = JSON.parse(userCookie);
-        new Kinvey.User().login(userCookie.username, userCookie.password, {
-          success: function(user) {
-            self.user(user);
-            self.loginInitialized(true);
-          },
-          error: function(error) {
-            parent.addError(error.error);
-          }
-        });
-      }else{
-        self.showLogin();
-        self.loginInitialized(true);
-      }
+      self.showLogin();
     }
+    self.loginInitialized(true);
     return this;
   }
 

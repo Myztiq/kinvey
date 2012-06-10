@@ -16,7 +16,6 @@ block content
         input(data-bind="checked: completed",type="checkbox")
         input(data-bind="value: title, valueUpdate:'afterkeydown'")
         input(data-bind="click: $parent.removeListItem", type="button", value="Remove")
-        span(data-bind="text: creator")
         br
     form(data-bind="submit: addListItem")
       input(data-bind="value: newListItemText, valueUpdate:'afterkeydown'", placeholder="New List Item")

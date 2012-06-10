@@ -72,10 +72,7 @@
         success: function(list) {
           self.todoList([]);
           for(var i=0;i<list.length;i++){
-            //This check should not need to be here... When I fetch from the list-collection it should only return items that I have access to read...
-            if(list[i].attr._acl.creator == self.loginObject().user().getUsername()){
-              self.todoList.push(new ListItem(list[i]));
-            }
+            self.todoList.push(new ListItem(list[i]));
           }
           self.sort();
           self.showTodo(true);
@@ -128,10 +125,6 @@
     var self = this;
     self.title = ko.observable(kEntity.get('title')).extend({saveOnChange:{key: 'title', kEntity: kEntity}});
     self.completed = ko.booleanObservable(kEntity.get('completed')).extend({saveOnChange:{key: 'completed', kEntity: kEntity}});
-    self.creator = ko.observable('');
-    if(kEntity.attr && kEntity.attr._acl && kEntity.attr._acl.creator){
-      self.creator(kEntity.attr._acl.creator);
-    }
     //METHODS
     //METHODS
     //METHODS
